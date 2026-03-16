@@ -152,7 +152,7 @@
   <!-- 정보형 패널 -->
   <div id="panel-info" style="display:none;">
     <div class="card">
-      <div class="card-title">검색 설정 — 정보형 (네이티브)</div>
+<div class="card-title">검색 설정 — 정보형 (네이티브)</div>
       <div class="field-row col1"><div><label>키워드</label><input type="text" id="info-keyword" placeholder="예: 다이어트, 보험, 재테크" /></div></div>
       <div style="margin-bottom:14px;">
         <div class="preset-label">콘텐츠 포맷 프리셋</div>
@@ -169,17 +169,7 @@
           <span class="tag" data-val="체험단">체험단</span>
         </div>
       </div>
-      <div class="divider"></div>
       <div style="margin-bottom:14px;">
-        <div class="preset-label">특정 채널 등록</div>
-        <div class="channel-add-row"><input type="text" id="channelInput" placeholder="예: @헬스인포TV" /><button class="btn-add" onclick="addChannel()">+ 추가</button></div>
-        <div class="channel-list" id="channelList"></div>
-      </div>
-      <div class="field-row col3">
-      <div style="margin-bottom:14px;">
-        <div class="preset-label">영상 형식</div>
-        <div class="tag-row">
-<div style="margin-bottom:14px;">
         <div class="preset-label">영상 형식</div>
         <div class="tag-row">
           <span class="tag sel-info" id="info-format-short" data-val="short" onclick="selectFormat('info','short')">숏츠 (Shorts)</span>
@@ -187,13 +177,18 @@
           <span class="tag" id="info-format-any" data-val="any" onclick="selectFormat('info','any')">전체</span>
         </div>
       </div>
+      <div class="divider"></div>
+      <div style="margin-bottom:14px;">
+        <div class="preset-label">특정 채널 등록</div>
+        <div class="channel-add-row"><input type="text" id="channelInput" placeholder="예: @헬스인포TV" /><button class="btn-add" onclick="addChannel()">+ 추가</button></div>
+        <div class="channel-list" id="channelList"></div>
+      </div>
       <div class="field-row col3">
         <div><label>수집 개수</label><select id="info-max"><option value="10">10개</option><option value="20" selected>20개</option><option value="30">30개</option><option value="50">50개</option></select></div>
         <div><label>기간</label><select id="info-period"><option value="7">최근 7일</option><option value="30" selected>최근 30일</option><option value="90">최근 3개월</option><option value="365">최근 1년</option></select></div>
         <div><label>정렬</label><select id="info-sort"><option value="viewCount">조회수순</option><option value="relevance" selected>관련도순</option><option value="date">최신순</option></select></div>
-      </div>      </div>
-      <button class="btn-search info-mode" onclick="runSearch('info')">정보형 레퍼런스 수집 시작</button>
-    </div>
+      </div>
+      <button class="btn-search info-mode" onclick="runSearch('info')">정보형 레퍼런스 수집 시작</button>    </div>
   </div>
 
   <div id="resultsArea">
