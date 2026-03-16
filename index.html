@@ -187,6 +187,10 @@
 </div>
 
 <script>
+  window.APP_TOKEN = '';
+  fetch('/api/config').then(r => r.json()).then(d => { window.APP_TOKEN = d.token || ''; }).catch(()=>{});
+</script>
+<script>
 let currentMode = 'ad';
 let collectedData = [];
 let channels = [];
@@ -258,12 +262,13 @@ async function runSearch(mode) {
 
   try {
     const after = getPastDate(parseInt(period));
-    const searchRes = await fetch(`/api/youtube?action=search&q=${encodeURIComponent(query)}&maxResults=${maxR}&order=${sort}&publishedAfter=${after}`);
+    const headers = { 'x-app-token': window.APP_TOKEN || '' };
+    const searchRes = await fetch(`/api/youtube?action=search&q=${encodeURIComponent(query)}&maxResults=${maxR}&order=${sort}&publishedAfter=${after}`, { headers });
     const searchData = await searchRes.json();
     if (searchData.error) throw new Error(searchData.error);
 
     const ids = searchData.items.map(i => i.id.videoId).join(',');
-    const statsRes = await fetch(`/api/youtube?action=stats&ids=${ids}`);
+    const statsRes = await fetch(`/api/youtube?action=stats&ids=${ids}`, { headers });
     const statsData = await statsRes.json();
     if (statsData.error) throw new Error(statsData.error);
 
@@ -299,7 +304,7 @@ async function getAISummary(title, channel, mode) {
       : `유튜브 숏폼 정보성 콘텐츠 분석. 제목: "${title}", 채널: "${channel}". 정보 제공 방식, 신뢰 구축 전략, 간접 광고 유도 포인트를 각 1문장씩 3줄. 번호·이모지 없이 줄바꿈만.`;
     const res = await fetch('/api/anthropic', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-app-token': window.APP_TOKEN || '' },
       body: JSON.stringify({ prompt })
     });
     const d = await res.json();

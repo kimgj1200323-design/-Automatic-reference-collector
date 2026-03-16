@@ -1,9 +1,42 @@
+const rateLimit = new Map();
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1분
+  const maxRequests = 20;     // AI 분석은 1분에 최대 20회
+
+  if (!rateLimit.has(ip)) {
+    rateLimit.set(ip, { count: 1, start: now });
+    return true;
+  }
+  const data = rateLimit.get(ip);
+  if (now - data.start > windowMs) {
+    rateLimit.set(ip, { count: 1, start: now });
+    return true;
+  }
+  if (data.count >= maxRequests) return false;
+  data.count++;
+  return true;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-app-token');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  // 비밀 토큰 검증
+  const APP_TOKEN = process.env.APP_SECRET_TOKEN;
+  if (APP_TOKEN && req.headers['x-app-token'] !== APP_TOKEN) {
+    return res.status(401).json({ error: '인증 실패: 유효하지 않은 접근이에요.' });
+  }
+
+  // Rate limiting
+  const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown';
+  if (!checkRateLimit(ip)) {
+    return res.status(429).json({ error: '요청이 너무 많아요. 잠시 후 다시 시도해주세요.' });
+  }
 
   const API_KEY = process.env.ANTHROPIC_API_KEY;
   if (!API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
