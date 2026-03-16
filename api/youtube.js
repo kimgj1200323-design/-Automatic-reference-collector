@@ -37,8 +37,7 @@ export default async function handler(req, res) {
     return res.status(429).json({ error: '요청이 너무 많아요. 잠시 후 다시 시도해주세요.' });
   }
 
-  const { action, ...params } = req.query;
-  const API_KEY = process.env.YOUTUBE_API_KEY;
+const { action, q, maxResults, order, publishedAfter, ids, duration } = req.query;  const API_KEY = process.env.YOUTUBE_API_KEY;
 
   if (!API_KEY) {
     return res.status(500).json({ error: 'YouTube API 키가 설정되지 않았어요. Vercel 환경변수를 확인해주세요.' });
@@ -49,7 +48,6 @@ export default async function handler(req, res) {
 
     if (action === 'search') {
       const { q, maxResults, order, publishedAfter } = params;
-      url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(q)}&type=video&videoDuration=short&order=${order}&maxResults=${maxResults}&publishedAfter=${publishedAfter}&key=${API_KEY}`;
 url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(q)}&type=video&videoDuration=${duration === 'any' ? 'any' : duration === 'long' ? 'long' : 'short'}&order=${order}&maxResults=${maxResults}&publishedAfter=${publishedAfter}&key=${API_KEY}`;
     } else if (action === 'stats') {
       const { ids } = params;
