@@ -141,9 +141,9 @@
           <span class="tag" id="ad-format-long" data-val="long" onclick="selectFormat('ad','long')">롱폼 (일반영상)</span>
           <span class="tag" id="ad-format-any" data-val="any" onclick="selectFormat('ad','any')">전체</span>
         </div>
-      </div>        <div><label>수집 개수</label><select id="ad-max"><option value="10">10개</option><option value="20" selected>20개</option><option value="30">30개</option><option value="50">50개</option></select></div>
-        <div><label>기간</label><select id="ad-period"><option value="7">최근 7일</option><option value="30" selected>최근 30일</option><option value="90">최근 3개월</option><option value="365">최근 1년</option></select></div>
-        <div><label>정렬</label><select id="ad-sort"><option value="viewCount">조회수순</option><option value="relevance" selected>관련도순</option><option value="date">최신순</option></select></div>
+      </div>
+      <div class="field-row col3">
+      </div>        <div><label>정렬</label><select id="ad-sort"><option value="viewCount">조회수순</option><option value="relevance" selected>관련도순</option><option value="date">최신순</option></select></div>
       </div>
       <button class="btn-search" onclick="runSearch('ad')">광고형 레퍼런스 수집 시작</button>
     </div>
@@ -179,15 +179,19 @@
       <div style="margin-bottom:14px;">
         <div class="preset-label">영상 형식</div>
         <div class="tag-row">
+<div style="margin-bottom:14px;">
+        <div class="preset-label">영상 형식</div>
+        <div class="tag-row">
           <span class="tag sel-info" id="info-format-short" data-val="short" onclick="selectFormat('info','short')">숏츠 (Shorts)</span>
           <span class="tag" id="info-format-long" data-val="long" onclick="selectFormat('info','long')">롱폼 (일반영상)</span>
           <span class="tag" id="info-format-any" data-val="any" onclick="selectFormat('info','any')">전체</span>
         </div>
       </div>
+      <div class="field-row col3">
         <div><label>수집 개수</label><select id="info-max"><option value="10">10개</option><option value="20" selected>20개</option><option value="30">30개</option><option value="50">50개</option></select></div>
         <div><label>기간</label><select id="info-period"><option value="7">최근 7일</option><option value="30" selected>최근 30일</option><option value="90">최근 3개월</option><option value="365">최근 1년</option></select></div>
         <div><label>정렬</label><select id="info-sort"><option value="viewCount">조회수순</option><option value="relevance" selected>관련도순</option><option value="date">최신순</option></select></div>
-      </div>
+      </div>      </div>
       <button class="btn-search info-mode" onclick="runSearch('info')">정보형 레퍼런스 수집 시작</button>
     </div>
   </div>
@@ -300,7 +304,7 @@ const format = getFormat(mode);
     const ids = searchData.items.map(i => i.id.videoId).join(',');
     const statsRes = await fetch(`/api/youtube?action=stats&ids=${ids}`, { headers });
     const statsData = await statsRes.json();
-    if (statsData.error) throw new Error(statsData.error);
+    if (statsData.error) throw new Error(statsData.error);`
 
     const stats = {};
     statsData.items.forEach(v => { stats[v.id] = v.statistics; });
