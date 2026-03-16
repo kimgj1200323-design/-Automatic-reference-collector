@@ -299,8 +299,7 @@ const format = getFormat(mode);
     const ids = searchData.items.map(i => i.id.videoId).join(',');
     const statsRes = await fetch(`/api/youtube?action=stats&ids=${ids}`, { headers });
     const statsData = await statsRes.json();
-    if (statsData.error) throw new Error(statsData.error);`
-
+if (statsData.error) throw new Error(statsData.error);
     const stats = {};
     statsData.items.forEach(v => { stats[v.id] = v.statistics; });
 
@@ -316,8 +315,10 @@ const format = getFormat(mode);
         viewCount: s.viewCount || '0',
         likeCount: s.likeCount || '0',
         commentCount: s.commentCount || '0',
-url: `https://www.youtube.com/shorts/${vid}`,    });
-    renderResults(mode);
+url: `https://www.youtube.com/shorts/${vid}`
+      };
+    });
+    renderResults(mode);    renderResults(mode);
   } catch(e) {
     document.getElementById('resultsArea').innerHTML = `<div class="error-box"><strong>수집 실패</strong><br>${e.message}</div>`;
   }
