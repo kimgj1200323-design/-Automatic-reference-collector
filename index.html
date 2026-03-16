@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPA 광고 레퍼런스 수집기</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --surface2: #f2f1ee;
+    --border: #e4e2dc;
+    --border2: #d0cec7;
+    --text: #1a1916;
+    --text2: #6b6860;
+    --text3: #a09e99;
+    --accent: #1a1916;
+    --blue: #1a56db;
+    --blue-bg: #eff4ff;
+    --blue-text: #1e429f;
+    --green: #0f6e56;
+    --green-bg: #ecfdf5;
+    --green-text: #065f46;
+    --amber: #92400e;
+    --amber-bg: #fffbeb;
+    --amber-border: #f59e0b;
+    --red-bg: #fef2f2;
+    --red-text: #991b1b;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --radius-lg: 14px;
+  }
+  body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
+  .app-wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  .app-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.3px; }
+  .app-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+  .mode-tabs { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px; }
+  .mode-tab { flex: 1; padding: 13px 16px; background: transparent; border: none; cursor: pointer; font-size: 14px; font-family: 'Pretendard', sans-serif; font-weight: 500; color: var(--text2); transition: all 0.15s; text-align: center; }
+  .mode-tab.active { background: var(--accent); color: #fff; }
+  .mode-tab:not(.active):hover { background: var(--surface2); }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle; font-weight: 500; }
+  .badge-ad { background: var(--amber-bg); color: var(--amber); border: 1px solid #fcd34d; }
+  .badge-info { background: var(--green-bg); color: var(--green-text); border: 1px solid #6ee7b7; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px; }
+  .card-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+  label { font-size: 13px; color: var(--text2); display: block; margin-bottom: 5px; }
+  input[type=text], input[type=password], select { width: 100%; padding: 9px 11px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface2); color: var(--text); font-size: 14px; font-family: 'Pretendard', sans-serif; outline: none; transition: border-color 0.15s; }
+  input:focus, select:focus { border-color: var(--blue); background: var(--surface); }
+  .field-row { display: grid; gap: 12px; margin-bottom: 14px; }
+  .col2 { grid-template-columns: 1fr 1fr; }
+  .col3 { grid-template-columns: 1fr 1fr 1fr; }
+  .col1 { grid-template-columns: 1fr; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tag { padding: 5px 12px; border-radius: 20px; font-size: 13px; border: 1px solid var(--border2); cursor: pointer; color: var(--text2); background: var(--surface); transition: all 0.12s; user-select: none; font-family: 'Pretendard', sans-serif; }
+  .tag.sel-ad { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber); font-weight: 500; }
+  .tag.sel-info { background: var(--green-bg); border-color: #34d399; color: var(--green-text); font-weight: 500; }
+  .preset-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+  .channel-add-row { display: flex; gap: 8px; }
+  .channel-add-row input { flex: 1; }
+  .btn-add { padding: 9px 14px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); font-size: 13px; cursor: pointer; color: var(--text); font-family: 'Pretendard', sans-serif; white-space: nowrap; font-weight: 500; }
+  .btn-add:hover { background: var(--surface2); }
+  .channel-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .channel-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--surface2); border-radius: var(--radius-sm); font-size: 13px; }
+  .channel-item span { flex: 1; }
+  .channel-remove { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 18px; line-height: 1; }
+  .btn-search { width: 100%; padding: 13px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Pretendard', sans-serif; transition: opacity 0.15s; letter-spacing: -0.2px; }
+  .btn-search:hover { opacity: 0.87; }
+  .btn-search:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-search.info-mode { background: var(--green); }
+  .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .results-count { font-size: 13px; color: var(--text2); }
+  .btn-export { padding: 8px 14px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); font-size: 13px; cursor: pointer; color: var(--text); font-family: 'Pretendard', sans-serif; font-weight: 500; }
+  .btn-export:hover { background: var(--surface2); }
+  .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 10px; display: flex; gap: 14px; transition: box-shadow 0.15s; }
+  .result-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .thumb { width: 128px; height: 72px; border-radius: var(--radius-sm); background: var(--surface2); flex-shrink: 0; overflow: hidden; position: relative; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb-badge { position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.72); color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 4px; }
+  .rc-body { flex: 1; min-width: 0; }
+  .rc-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rc-metrics { display: flex; gap: 14px; margin-bottom: 8px; flex-wrap: wrap; }
+  .rc-metric { font-size: 12px; color: var(--text2); }
+  .rc-metric strong { color: var(--text); font-weight: 600; }
+  .ai-box { border-radius: var(--radius-sm); padding: 9px 11px; font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 8px; }
+  .ai-box-ad { background: var(--amber-bg); }
+  .ai-box-info { background: var(--green-bg); }
+  .ai-label { font-size: 11px; font-weight: 600; margin-bottom: 3px; letter-spacing: 0.04em; }
+  .ai-label-ad { color: var(--amber); }
+  .ai-label-info { color: var(--green); }
+  .rc-actions { display: flex; gap: 8px; align-items: center; }
+  .btn-sm { padding: 5px 11px; border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; font-family: 'Pretendard', sans-serif; font-weight: 500; border: 1px solid var(--border2); background: var(--surface); color: var(--text); transition: background 0.12s; text-decoration: none; display: inline-block; }
+  .btn-sm:hover { background: var(--surface2); }
+  .btn-save-ad { border-color: var(--amber-border); background: var(--amber-bg); color: var(--amber); }
+  .btn-save-info { border-color: #34d399; background: var(--green-bg); color: var(--green-text); }
+  .score-pill { margin-left: auto; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+  .score-high { background: #d1fae5; color: #065f46; }
+  .score-mid { background: var(--amber-bg); color: var(--amber); }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text2); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+  .skeleton { background: var(--surface2); border-radius: var(--radius-sm); animation: shimmer 1.4s ease-in-out infinite; }
+  @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:0.45} }
+  .error-box { background: var(--red-bg); border: 1px solid #fca5a5; border-radius: var(--radius); padding: 14px 16px; color: var(--red-text); font-size: 13px; line-height: 1.8; }
+  @media (max-width: 600px) { .col2, .col3 { grid-template-columns: 1fr; } .thumb { width: 90px; height: 54px; } .app-wrap { padding: 20px 16px 60px; } }
+</style>
+</head>
+<body>
+<div class="app-wrap">
+  <div class="app-title">CPA 광고 레퍼런스 수집기</div>
+  <div class="app-sub">YouTube Shorts에서 광고형·정보형 레퍼런스를 수집하고 AI가 분석해드려요</div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" id="tab-ad" onclick="switchMode('ad')">광고형 <span class="badge badge-ad">CPA 직접광고</span></button>
+    <button class="mode-tab" id="tab-info" onclick="switchMode('info')">정보형 <span class="badge badge-info">네이티브 · 후기형</span></button>
+  </div>
+
+  <!-- 광고형 패널 -->
+  <div id="panel-ad">
+    <div class="card">
+      <div class="card-title">검색 설정 — 광고형</div>
+      <div class="field-row col1"><div><label>키워드</label><input type="text" id="ad-keyword" placeholder="예: 다이어트, 보험, 대출" /></div></div>
+      <div style="margin-bottom:14px;">
+        <div class="preset-label">업종 카테고리 (복수 선택)</div>
+        <div class="tag-row" id="ad-categories">
+          <span class="tag sel-ad" data-val="건강기능식품 CPA">건강기능식품</span>
+          <span class="tag" data-val="다이어트 보조제">다이어트</span>
+          <span class="tag" data-val="보험 CPA 광고">보험</span>
+          <span class="tag" data-val="대출 CPA">대출</span>
+          <span class="tag" data-val="온라인강의 CPA">교육</span>
+          <span class="tag" data-val="앱 설치 광고">앱서비스</span>
+          <span class="tag" data-val="뷰티 CPA">뷰티</span>
+          <span class="tag" data-val="쇼핑몰 퍼포먼스">쇼핑</span>
+        </div>
+      </div>
+      <div class="field-row col3">
+        <div><label>수집 개수</label><select id="ad-max"><option value="10">10개</option><option value="20" selected>20개</option><option value="30">30개</option><option value="50">50개</option></select></div>
+        <div><label>기간</label><select id="ad-period"><option value="7">최근 7일</option><option value="30" selected>최근 30일</option><option value="90">최근 3개월</option><option value="365">최근 1년</option></select></div>
+        <div><label>정렬</label><select id="ad-sort"><option value="viewCount">조회수순</option><option value="relevance" selected>관련도순</option><option value="date">최신순</option></select></div>
+      </div>
+      <button class="btn-search" onclick="runSearch('ad')">광고형 레퍼런스 수집 시작</button>
+    </div>
+  </div>
+
+  <!-- 정보형 패널 -->
+  <div id="panel-info" style="display:none;">
+    <div class="card">
+      <div class="card-title">검색 설정 — 정보형 (네이티브)</div>
+      <div class="field-row col1"><div><label>키워드</label><input type="text" id="info-keyword" placeholder="예: 다이어트, 보험, 재테크" /></div></div>
+      <div style="margin-bottom:14px;">
+        <div class="preset-label">콘텐츠 포맷 프리셋</div>
+        <div class="tag-row" id="info-formats">
+          <span class="tag sel-info" data-val="솔직후기">솔직 후기</span>
+          <span class="tag sel-info" data-val="추천">추천</span>
+          <span class="tag sel-info" data-val="비교분석">비교분석</span>
+          <span class="tag" data-val="꿀팁">꿀팁</span>
+          <span class="tag" data-val="실제사용기">실제 사용기</span>
+          <span class="tag" data-val="주의사항">주의사항</span>
+          <span class="tag" data-val="모르면손해">모르면 손해</span>
+          <span class="tag" data-val="진짜후기">진짜 후기</span>
+          <span class="tag" data-val="전문가추천">전문가 추천</span>
+          <span class="tag" data-val="체험단">체험단</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-bottom:14px;">
+        <div class="preset-label">특정 채널 등록</div>
+        <div class="channel-add-row"><input type="text" id="channelInput" placeholder="예: @헬스인포TV" /><button class="btn-add" onclick="addChannel()">+ 추가</button></div>
+        <div class="channel-list" id="channelList"></div>
+      </div>
+      <div class="field-row col3">
+        <div><label>수집 개수</label><select id="info-max"><option value="10">10개</option><option value="20" selected>20개</option><option value="30">30개</option><option value="50">50개</option></select></div>
+        <div><label>기간</label><select id="info-period"><option value="7">최근 7일</option><option value="30" selected>최근 30일</option><option value="90">최근 3개월</option><option value="365">최근 1년</option></select></div>
+        <div><label>정렬</label><select id="info-sort"><option value="viewCount">조회수순</option><option value="relevance" selected>관련도순</option><option value="date">최신순</option></select></div>
+      </div>
+      <button class="btn-search info-mode" onclick="runSearch('info')">정보형 레퍼런스 수집 시작</button>
+    </div>
+  </div>
+
+  <div id="resultsArea">
+    <div class="empty-state">
+      <div style="font-size:36px;margin-bottom:12px;">🎬</div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:6px;">수집된 레퍼런스가 없어요</div>
+      <div style="font-size:13px;">모드를 선택하고 수집을 시작해보세요</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentMode = 'ad';
+let collectedData = [];
+let channels = [];
+
+function switchMode(mode) {
+  currentMode = mode;
+  document.getElementById('tab-ad').classList.toggle('active', mode === 'ad');
+  document.getElementById('tab-info').classList.toggle('active', mode === 'info');
+  document.getElementById('panel-ad').style.display = mode === 'ad' ? '' : 'none';
+  document.getElementById('panel-info').style.display = mode === 'info' ? '' : 'none';
+}
+
+document.querySelectorAll('#ad-categories .tag').forEach(t => t.addEventListener('click', () => t.classList.toggle('sel-ad')));
+document.querySelectorAll('#info-formats .tag').forEach(t => t.addEventListener('click', () => t.classList.toggle('sel-info')));
+
+function addChannel() {
+  const v = document.getElementById('channelInput').value.trim();
+  if (!v) return;
+  channels.push(v); renderChannels();
+  document.getElementById('channelInput').value = '';
+}
+function removeChannel(i) { channels.splice(i, 1); renderChannels(); }
+function renderChannels() {
+  document.getElementById('channelList').innerHTML = channels.map((c, i) =>
+    `<div class="channel-item"><span>${c}</span><button class="channel-remove" onclick="removeChannel(${i})">×</button></div>`
+  ).join('');
+}
+
+function getTagVals(id, cls) {
+  return [...document.querySelectorAll(`#${id} .tag.${cls}`)].map(t => t.dataset.val).join(' ');
+}
+function getPastDate(days) {
+  const d = new Date(); d.setDate(d.getDate() - days); return d.toISOString();
+}
+function fmtNum(n) {
+  n = parseInt(n) || 0;
+  if (n >= 10000) return (n/10000).toFixed(1).replace('.0','') + '만';
+  if (n >= 1000) return (n/1000).toFixed(1).replace('.0','') + 'k';
+  return n.toLocaleString();
+}
+function calcScore(v, l) {
+  return Math.min(100, Math.round((parseInt(v)||0)/50000*60 + (parseInt(l)||0)/1000*40));
+}
+
+function renderSkeleton() {
+  let h = '<div class="results-header"><span class="results-count">수집 중...</span></div>';
+  for (let i = 0; i < 4; i++) h += `<div class="result-card"><div class="skeleton" style="width:128px;height:72px;flex-shrink:0;border-radius:6px;"></div><div style="flex:1;display:flex;flex-direction:column;gap:8px;padding:2px 0;"><div class="skeleton" style="height:16px;width:65%;"></div><div class="skeleton" style="height:12px;width:40%;"></div><div class="skeleton" style="height:52px;"></div></div></div>`;
+  document.getElementById('resultsArea').innerHTML = h;
+}
+
+async function runSearch(mode) {
+  let query, maxR, period, sort;
+  if (mode === 'ad') {
+    query = [document.getElementById('ad-keyword').value.trim(), getTagVals('ad-categories','sel-ad')].filter(Boolean).join(' ');
+    maxR = document.getElementById('ad-max').value;
+    period = document.getElementById('ad-period').value;
+    sort = document.getElementById('ad-sort').value;
+  } else {
+    query = [document.getElementById('info-keyword').value.trim(), getTagVals('info-formats','sel-info')].filter(Boolean).join(' ');
+    maxR = document.getElementById('info-max').value;
+    period = document.getElementById('info-period').value;
+    sort = document.getElementById('info-sort').value;
+  }
+  if (!query.trim()) { alert('키워드 또는 카테고리를 선택해주세요'); return; }
+
+  renderSkeleton();
+  const btn = document.querySelector(`#panel-${mode} .btn-search`);
+  btn.disabled = true;
+
+  try {
+    const after = getPastDate(parseInt(period));
+    const searchRes = await fetch(`/api/youtube?action=search&q=${encodeURIComponent(query)}&maxResults=${maxR}&order=${sort}&publishedAfter=${after}`);
+    const searchData = await searchRes.json();
+    if (searchData.error) throw new Error(searchData.error);
+
+    const ids = searchData.items.map(i => i.id.videoId).join(',');
+    const statsRes = await fetch(`/api/youtube?action=stats&ids=${ids}`);
+    const statsData = await statsRes.json();
+    if (statsData.error) throw new Error(statsData.error);
+
+    const stats = {};
+    statsData.items.forEach(v => { stats[v.id] = v.statistics; });
+
+    collectedData = searchData.items.map(item => {
+      const vid = item.id.videoId;
+      const s = stats[vid] || {};
+      return {
+        id: vid, mode,
+        title: item.snippet.title,
+        channel: item.snippet.channelTitle,
+        thumbnail: item.snippet.thumbnails.medium?.url || '',
+        publishedAt: item.snippet.publishedAt?.slice(0,10) || '',
+        viewCount: s.viewCount || '0',
+        likeCount: s.likeCount || '0',
+        commentCount: s.commentCount || '0',
+        url: `https://www.youtube.com/shorts/${vid}`
+      };
+    });
+    renderResults(mode);
+  } catch(e) {
+    document.getElementById('resultsArea').innerHTML = `<div class="error-box"><strong>수집 실패</strong><br>${e.message}</div>`;
+  }
+  btn.disabled = false;
+}
+
+async function getAISummary(title, channel, mode) {
+  try {
+    const prompt = mode === 'ad'
+      ? `유튜브 숏폼 CPA 광고 분석. 제목: "${title}", 채널: "${channel}". 후킹 전략, 타겟 고객, CPA 유도 방식을 각 1문장씩 3줄. 번호·이모지 없이 줄바꿈만.`
+      : `유튜브 숏폼 정보성 콘텐츠 분석. 제목: "${title}", 채널: "${channel}". 정보 제공 방식, 신뢰 구축 전략, 간접 광고 유도 포인트를 각 1문장씩 3줄. 번호·이모지 없이 줄바꿈만.`;
+    const res = await fetch('/api/anthropic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const d = await res.json();
+    return d.text || null;
+  } catch { return null; }
+}
+
+function renderResults(mode) {
+  if (!collectedData.length) {
+    document.getElementById('resultsArea').innerHTML = `<div class="empty-state"><div style="font-size:36px;margin-bottom:12px;">🔍</div><div style="font-size:15px;font-weight:600;">검색 결과가 없어요</div><div style="font-size:13px;margin-top:6px;">키워드를 다르게 시도해보세요</div></div>`;
+    return;
+  }
+  const label = mode === 'ad' ? '광고형' : '정보형';
+  document.getElementById('resultsArea').innerHTML = `
+    <div class="results-header">
+      <span class="results-count">${label} 레퍼런스 ${collectedData.length}개 수집됨</span>
+      <button class="btn-export" onclick="exportCSV()">엑셀로 내보내기 ↓</button>
+    </div><div id="cardList"></div>`;
+
+  collectedData.forEach(item => {
+    const score = calcScore(item.viewCount, item.likeCount);
+    const isInfo = item.mode === 'info';
+    document.getElementById('cardList').insertAdjacentHTML('beforeend', `
+      <div class="result-card">
+        <div class="thumb"><img src="${item.thumbnail}" alt="" onerror="this.style.display='none'" /><span class="thumb-badge">#Shorts</span></div>
+        <div class="rc-body">
+          <div class="rc-title" title="${item.title}">${item.title}</div>
+          <div class="rc-metrics">
+            <div class="rc-metric">조회수 <strong>${fmtNum(item.viewCount)}</strong></div>
+            <div class="rc-metric">좋아요 <strong>${fmtNum(item.likeCount)}</strong></div>
+            <div class="rc-metric">댓글 <strong>${fmtNum(item.commentCount)}</strong></div>
+            <div class="rc-metric">채널 <strong>${item.channel}</strong></div>
+            <div class="rc-metric">날짜 <strong>${item.publishedAt}</strong></div>
+          </div>
+          <div class="ai-box ${isInfo?'ai-box-info':'ai-box-ad'}" id="ai_${item.id}">
+            <div class="ai-label ${isInfo?'ai-label-info':'ai-label-ad'}">AI 분석 로딩 중...</div>
+          </div>
+          <div class="rc-actions">
+            <a href="${item.url}" target="_blank" class="btn-sm">영상 보기 ↗</a>
+            <button class="btn-sm ${isInfo?'btn-save-info':'btn-save-ad'}" onclick="saveItem(this)">저장</button>
+            <span class="score-pill ${score>=60?'score-high':'score-mid'}">${score}점</span>
+          </div>
+        </div>
+      </div>`);
+
+    getAISummary(item.title, item.channel, item.mode).then(summary => {
+      const el = document.getElementById('ai_' + item.id);
+      if (!el) return;
+      if (summary) {
+        el.innerHTML = `<div class="ai-label ${isInfo?'ai-label-info':'ai-label-ad'}">AI 분석 (${isInfo?'정보형':'광고형'})</div>${summary.replace(/\n/g,'<br>')}`;
+      } else {
+        el.innerHTML = `<div class="ai-label ${isInfo?'ai-label-info':'ai-label-ad'}">AI 분석</div><span style="color:#a09e99;font-size:12px;">Vercel 환경변수에 ANTHROPIC_API_KEY 설정 시 자동 분석돼요</span>`;
+      }
+    });
+  });
+}
+
+function saveItem(btn) {
+  btn.textContent = '저장됨 ✓';
+  btn.style.background = '#d1fae5'; btn.style.borderColor = '#34d399'; btn.style.color = '#065f46';
+  btn.disabled = true;
+}
+
+function exportCSV() {
+  if (!collectedData.length) return;
+  const header = ['모드','제목','채널','조회수','좋아요','댓글수','게시일','URL'];
+  const rows = collectedData.map(d => [
+    d.mode==='ad'?'광고형':'정보형', `"${d.title.replace(/"/g,'""')}"`,
+    `"${d.channel}"`, d.viewCount, d.likeCount, d.commentCount, d.publishedAt, d.url
+  ]);
+  const csv = '\uFEFF' + [header,...rows].map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = 'CPA_레퍼런스_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
