@@ -244,13 +244,12 @@ function renderSkeleton() {
 async function runSearch(mode) {
   let query, maxR, period, sort;
   if (mode === 'ad') {
-    query = [document.getElementById('ad-keyword').value.trim(), getTagVals('ad-categories','sel-ad')].filter(Boolean).join(' ');
+    query = document.getElementById('ad-keyword').value.trim() || getTagVals('ad-categories','sel-ad').split(' ')[0];
     maxR = document.getElementById('ad-max').value;
     period = document.getElementById('ad-period').value;
     sort = document.getElementById('ad-sort').value;
   } else {
-    query = [document.getElementById('info-keyword').value.trim(), getTagVals('info-formats','sel-info')].filter(Boolean).join(' ');
-    maxR = document.getElementById('info-max').value;
+query = document.getElementById('info-keyword').value.trim() || getTagVals('info-formats','sel-info').split(' ')[0];    maxR = document.getElementById('info-max').value;
     period = document.getElementById('info-period').value;
     sort = document.getElementById('info-sort').value;
   }
