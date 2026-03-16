@@ -316,9 +316,7 @@ const format = getFormat(mode);
         viewCount: s.viewCount || '0',
         likeCount: s.likeCount || '0',
         commentCount: s.commentCount || '0',
-        url: `https://www.youtube.com/shorts/${vid}`
-      };
-    });
+url: `https://www.youtube.com/shorts/${vid}`,    });
     renderResults(mode);
   } catch(e) {
     document.getElementById('resultsArea').innerHTML = `<div class="error-box"><strong>수집 실패</strong><br>${e.message}</div>`;
