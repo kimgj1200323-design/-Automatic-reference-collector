@@ -47,9 +47,9 @@ const { action, q, maxResults, order, publishedAfter, ids, duration } = req.quer
     let url = '';
 
     if (action === 'search') {
-const { q, maxResults, order, publishedAfter } = req.query;url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(q)}&type=video&videoDuration=${duration === 'any' ? 'any' : duration === 'long' ? 'long' : 'short'}&order=${order}&maxResults=${maxResults}&publishedAfter=${publishedAfter}&key=${API_KEY}`;
+   const { q, maxResults, order, publishedAfter } = req.query;url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(q)}&type=video&videoDuration=${duration === 'any' ? 'any' : duration === 'long' ? 'long' : 'short'}&order=${order}&maxResults=${maxResults}&publishedAfter=${publishedAfter}&key=${API_KEY}`;
     } else if (action === 'stats') {
-      const { ids } = params;
+   const { ids } = req.query;
       url = `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}&key=${API_KEY}`;
     } else {
       return res.status(400).json({ error: '알 수 없는 action이에요.' });
